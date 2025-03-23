@@ -19,7 +19,7 @@ app.get("/", (req, res) => {
 });
 app.use("/auth", AuthRoutes);
 app.use("/blog", BlogRoutes);
-app.listen(PORT, () => {
+app.listen(PORT, async() => 
+  {await ConnectToDB();
   console.log(`app running at http://localhost:${PORT}`);
 });
-ConnectToDB();
