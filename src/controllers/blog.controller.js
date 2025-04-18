@@ -4,7 +4,8 @@ import Blog from "../models/Blog.js";
 export const addBlog = async (req, res) => {
   try {
     const { title, description } = req.body;
-    const image = req.file ? req.file.path : req.body.image; // Handle both file upload and URL
+    const image = req.file?.secure_url || req.file?.path || req.body.image;
+    const imagePublicId = req.file?.filename || null; // If no file was uploaded, just set null
 
     const newBlog = new Blog({
       title,
@@ -78,7 +79,7 @@ export const updateBlog = async (req, res) => {
         .json({ success: false, message: "Unauthorized to update this blog" });
     }
 
-    const image = req.file?.secure_url || req.body.image; // Keep old image if none provided
+    const image = req.file ? req.file.path : req.body.image || blog.image; // Keep old image if none provided
 
     const updatedBlog = await Blog.findByIdAndUpdate(
       id,
