@@ -1,22 +1,26 @@
 import multer from "multer";
 import { CloudinaryStorage } from "multer-storage-cloudinary";
-import cloudinary from "cloudinary";
+import { v2 as cloudinary } from "cloudinary";
 
-cloudinary.v2.config({
+// Cloudinary config
+cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
+// Storage config
 const storage = new CloudinaryStorage({
-  cloudinary: cloudinary.v2,
+  cloudinary,
   params: {
     folder: "blog_images",
-    allowed_formats: ["jpg", "png", "jpeg"],
+    allowed_formats: ["jpg", "jpeg", "png"],
     public_id: (req, file) => {
-      return `${Date.now()}-${file.originalname.split(".")[0]}`;
+      const name = file.originalname.split(".")[0].replace(/\s+/g, "-");
+      return `${Date.now()}-${name}`;
     },
   },
 });
 
+// Multer middleware
 export const upload = multer({ storage });

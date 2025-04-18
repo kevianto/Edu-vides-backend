@@ -3,22 +3,33 @@ import Blog from "../models/Blog.js";
 // ✅ Add a Blog (with Image Upload)
 export const addBlog = async (req, res) => {
   try {
+    console.log("Uploaded file:", req.file); // Debugging
+
     const { title, description } = req.body;
-    const image = req.file?.secure_url || req.file?.path || req.body.image;
-    const imagePublicId = req.file?.filename || null; // If no file was uploaded, just set null
+
+    // Ensure file was uploaded
+    if (!req.file) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Image is required" });
+    }
+
+    const image = req.file.path; // Cloudinary returns 'path' as the secure URL
+    const imagePublicId = req.file.filename; // 'filename' from multer-storage-cloudinary is the public_id
 
     const newBlog = new Blog({
       title,
       description,
-      author: req.user.id, // Save the logged-in user's ID
-      image, // Store image URL
+      author: req.user.id,
+      image,
       imagePublicId,
     });
 
     await newBlog.save();
+
     return res.status(201).json({ success: true, blog: newBlog });
   } catch (error) {
-    console.error(error); // Debugging
+    console.error("Error creating blog:", error);
     return res
       .status(500)
       .json({ success: false, message: "Error in adding blog" });
