@@ -13,9 +13,10 @@ const storage = new CloudinaryStorage({
   params: {
     folder: "blog_images",
     allowed_formats: ["jpg", "png", "jpeg"],
+    public_id: (req, file) => {
+      return `${Date.now()}-${file.originalname.split(".")[0]}`;
+    },
   },
 });
 
 export const upload = multer({ storage });
-
-
