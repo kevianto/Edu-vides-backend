@@ -111,10 +111,10 @@ export const removeBlog = async (req, res) => {
         .status(403)
         .json({ success: false, message: "Unauthorized to delete this blog" });
     }
-    if (blog.imagePublicId) {
-      await cloudinary.v2.uploader.destroy(blog.imagePublicId); // 🔥 delete image
-    }
 
+    if (blog.imagePublicId) {
+      await cloud.uploader.destroy(blog.imagePublicId);
+    }
     await Blog.findByIdAndDelete(id);
     return res
       .status(200)
