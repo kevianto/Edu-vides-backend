@@ -1,4 +1,5 @@
 import Blog from "../models/Blog.js";
+import { v2 as cloudinary } from "cloudinary";
 
 // ✅ Add a Blog (with Image Upload)
 export const addBlog = async (req, res) => {
@@ -116,21 +117,31 @@ export const removeBlog = async (req, res) => {
         .status(404)
         .json({ success: false, message: "Blog not found" });
 
-    // Ensure the logged-in user is the author
     if (blog.author.toString() !== req.user.id) {
       return res
         .status(403)
         .json({ success: false, message: "Unauthorized to delete this blog" });
     }
 
-    if (blog.imagePublicId) {
-      await cloud.uploader.destroy(blog.imagePublicId);
+    // ✅ Debug logging
+    console.log("Deleting blog:", blog._id);
+    console.log("Image Public ID:", blog.imagePublicId);
+
+    try {
+      if (blog.imagePublicId) {
+        const result = await cloudinary.uploader.destroy(blog.imagePublicId);
+        console.log("Cloudinary delete result:", result);
+      }
+    } catch (cloudErr) {
+      console.error("Cloudinary deletion error:", cloudErr);
     }
+
     await Blog.findByIdAndDelete(id);
     return res
       .status(200)
       .json({ success: true, message: "Blog deleted successfully" });
   } catch (error) {
+    console.error("Error deleting blog:", error);
     return res
       .status(500)
       .json({ success: false, message: "Can't delete blog" });
