@@ -3,6 +3,8 @@ import cors from "cors";
 import AuthRoutes from "./routes/auth.routes.js";
 import BlogRoutes from "./routes/blog.routes.js";
 import ConnectToDB from "./config/db.js";
+import dotenv from "dotenv";    
+dotenv.config();
 
 const PORT = process.env.PORT || 3000;
 const app = express();
