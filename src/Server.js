@@ -9,9 +9,20 @@ dotenv.config();
 const PORT = process.env.PORT || 3000;
 const app = express();
 app.use(express.json());
+const allowedOrigins = [
+  'https://edu-frontend-b3ut3.vercel.app',
+  'http://localhost:5173'
+];
 app.use(
   cors({
-    origin: "https://edu-frontend-b3ut3.vercel.app" || "http://localhost:5173",
+     origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl)
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('CORS not allowed'));
+    }
+  },
     methods: "GET,POST,PUT,DELETE",
     allowedHeaders: "Content-Type,Authorization",
   })
