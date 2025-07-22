@@ -106,6 +106,22 @@ export const updateBlog = async (req, res) => {
       .json({ success: false, message: "Can't update blog" });
   }
 };
+//get blog by id
+export const getBlogById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const blog = await Blog.findById(id).populate("author", "name -_id");
+    if (!blog)
+      return res
+        .status(404)
+        .json({ success: false, message: "Blog not found" });   
+    return res.status(200).json({ success: true, blog });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ success: false, message: "Can't retrieve blog" });
+  }
+};  
 
 // ✅ Delete a Blog (Only by the Author)
 export const removeBlog = async (req, res) => {
@@ -123,9 +139,6 @@ export const removeBlog = async (req, res) => {
         .json({ success: false, message: "Unauthorized to delete this blog" });
     }
 
-    // ✅ Debug logging
-    console.log("Deleting blog:", blog._id);
-    console.log("Image Public ID:", blog.imagePublicId);
 
     try {
       if (blog.imagePublicId) {
