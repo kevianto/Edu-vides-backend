@@ -11,7 +11,7 @@ const app = express();
 app.use(express.json());
 const allowedOrigins = [
   'https://edu-frontend-b3ut3.vercel.app',
-  'http://localhost:5173'
+  'http://localhost:5173','https://edu-six-tan.vercel.app'
 ];
 app.use(
   cors({
